@@ -14,6 +14,10 @@ export interface TextData {
   readonly body: string;
 }
 
+export interface TodoData {
+  readonly body: string;
+}
+
 export class InputDialog
   extends BaseComponent<HTMLElement>
   implements Composable
@@ -54,7 +58,7 @@ export class InputDialog
   }
 
   addChild(child: Component) {
-    const body = document.querySelector("#dialog-body")! as HTMLElement;
+    const body = this.element.querySelector("#dialog-body")! as HTMLElement;
     child.attachTo(body);
   }
 }
