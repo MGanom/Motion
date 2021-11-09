@@ -3,9 +3,11 @@ import {
   InputDialog,
   MediaData,
   TextData,
+  TodoData,
 } from "./components/dialog/dialog.js";
 import { MediaSectionInput } from "./components/dialog/input/media-input.js";
 import { TextSectionInput } from "./components/dialog/input/text-input.js";
+import { TodoSectionInput } from "./components/dialog/input/todo-input.js";
 import { ImageComponent } from "./components/page/item/image.js";
 import { NoteComponent } from "./components/page/item/note.js";
 import { TodoComponent } from "./components/page/item/todo.js";
@@ -16,7 +18,9 @@ import {
   PageItemComponent,
 } from "./components/page/page.js";
 
-type InputComponentConstructor<T = (MediaData | TextData) & Component> = {
+type InputComponentConstructor<
+  T = (MediaData | TextData | TodoData) & Component
+> = {
   new (): T;
 };
 
@@ -44,18 +48,28 @@ class App {
       (input: TextSectionInput) => new NoteComponent(input.title, input.body)
     );
 
-    this.bindElementToDialog<TextSectionInput>(
+    this.bindElementToDialog<TodoSectionInput>(
       "#new-todo",
-      TextSectionInput,
-      (input: TextSectionInput) => new TodoComponent(input.title, input.body)
+      TodoSectionInput,
+      (input: TodoSectionInput) => new TodoComponent(input.body)
     );
 
     this.page.addChild(
       new ImageComponent("Image Title", "https://picsum.photos/800/400")
     );
+    this.page.addChild(
+      new VideoComponent(
+        "Image Title",
+        "https://www.youtube.com/watch?v=-AZ3X1zSCMc"
+      )
+    );
+    this.page.addChild(new NoteComponent("Image Title", "주절주절"));
+    this.page.addChild(new TodoComponent("할 일이지만 하지 않은 일"));
   }
 
-  private bindElementToDialog<T extends (MediaData | TextData) & Component>(
+  private bindElementToDialog<
+    T extends (MediaData | TextData | TodoData) & Component
+  >(
     selector: string,
     InputComponent: InputComponentConstructor<T>,
     makeSection: (input: T) => Component
@@ -63,9 +77,7 @@ class App {
     const element = document.querySelector(selector)! as HTMLButtonElement;
     element.addEventListener("click", () => {
       const dialog = new InputDialog();
-      console.log(dialog);
       const input = new InputComponent();
-      console.log(input);
       dialog.addChild(input);
       dialog.attachTo(this.dialogRoot);
 
